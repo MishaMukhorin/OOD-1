@@ -19,3 +19,4 @@ include_directories(part2/Canvas/stb_truetype.h.h)
 target_include_directories(ShapesOut PRIVATE part2/Canvas/ft2build.h)
 
 add_executable(FuncDuck part1/FuncSimUDuck/SimUDuck.cpp)
+add_executable(SimDuck part1/SimUDuck/SimUDuck.cpp)

@@ -10,8 +10,11 @@ int main()
 {
 	MallardDuck mallardDuck;
 	PlayWithDuck(mallardDuck);
+	PlayWithDuck(mallardDuck);
 
 	RedheadDuck redheadDuck;
+	PlayWithDuck(redheadDuck);
+	PlayWithDuck(redheadDuck);
 	PlayWithDuck(redheadDuck);
 
 	RubberDuck rubberDuck;

@@ -20,7 +20,7 @@ public:
 
     virtual ~Duck() = default;
 
-    void PerformFly()
+    void Fly()
     {
         if (m_flyBehavior)
         {
@@ -28,7 +28,7 @@ public:
         }
     }
 
-    void PerformQuack()
+    void Quack()
     {
         if (m_quackBehavior)
         {
@@ -36,7 +36,7 @@ public:
         }
     }
 
-    void PerformDance() const
+    void Dance() const
     {
         if (m_danceBehavior)
         {
