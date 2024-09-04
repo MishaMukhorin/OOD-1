@@ -25,6 +25,7 @@ int main()
 
 	ModelDuck modelDuck;
 	PlayWithDuck(modelDuck);
+    // нарсовать схему классов
 
 	modelDuck.SetFlyBehavior(std::make_unique<FlyWithWings>());
 	PlayWithDuck(modelDuck);

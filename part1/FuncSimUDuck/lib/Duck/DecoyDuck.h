@@ -12,7 +12,7 @@ class DecoyDuck : public Duck
 {
 public:
     DecoyDuck()
-            : Duck(FlyNoWay(), MuteQuack(), NoDance())
+            : Duck(CreateFlyNoWay(), CreateMuteQuack(), CreateNoDance())
     {
     }
 

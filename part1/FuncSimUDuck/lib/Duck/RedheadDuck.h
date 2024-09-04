@@ -8,7 +8,7 @@ class RedheadDuck : public Duck
 {
 public:
     RedheadDuck()
-            : Duck(FlyWithCounting(), QuackNormal(), DanceMinuet())
+            : Duck(CreateFlyWithCounting(), CreateQuackNormal(), CreateDanceMinuet())
     {
     }
 

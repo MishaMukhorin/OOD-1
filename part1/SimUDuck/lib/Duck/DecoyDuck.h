@@ -11,7 +11,7 @@ class DecoyDuck : public Duck
 {
 public:
 	DecoyDuck()
-		: Duck(std::make_unique<FlyNoWay>(), std::make_unique<MuteQuackBehavior>())
+		: Duck(std::make_unique<CreateFlyNoWay>(), std::make_unique<MuteQuackBehavior>())
 	{
 	}
 
@@ -19,7 +19,6 @@ public:
 	{
 		std::cout << "I'm decoy duck" << std::endl;
 	}
-
 
 };
 

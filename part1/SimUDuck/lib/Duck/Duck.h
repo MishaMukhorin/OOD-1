@@ -46,7 +46,7 @@ public:
 
     virtual void Display() const = 0;
 
-    void SetFlyBehavior(std::unique_ptr<IFlyBehavior> flyBehavior)
+    void SetFlyBehavior(std::unique_ptr<IFlyBehavior> flyBehavior) // сделать возможность изменения стратегии только у тех уток которые могут это сделать
     {
         m_flyBehavior = std::move(flyBehavior);
     }

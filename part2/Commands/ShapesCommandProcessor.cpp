@@ -66,14 +66,13 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                             }},
 
                     // Text: command <id> text <x> <y> <size> <text>
-                    {regex(commandType + R"(text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
+                    {regex(commandType + R"(\s+text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
                             [&newShape, id, color](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double size = stod(match[3].str());
                                 string text = match[4].str();
-
                                 newShape = make_unique<shapes::Text>(id, color, x, y, size, text);
                             }},
             };
@@ -88,7 +87,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
             return;
         }
     }
-    cout << "error: invalid command!" << endl;
+    cout << "error: invalid Shape command!" << endl;
 }
 
 
@@ -99,12 +98,12 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
     const string S = R"(\s+)";
     const string COLOR = R"((#[0-9A-Fa-f]{6}))";
 //
-//     AddShape sh1 #ff00ff circle 100 110 15
-//     AddShape circ #febb38 circle 100 200 25
-//     AddShape sh2 #123456 rectangle 10 20 30 40
-//     AddShape tr1 #00feta triangle 0 0 10 0 0 10
-//     AddShape ln1 #fefefe line 10 20 35 -88
-//     AddShape txt1 #ffaa88 text 100 100 12 HELLO WORLD
+// AddShape sh1 #ff00ff circle 100 110 15
+// AddShape circ #febb38 circle 100 200 25
+// AddShape sh2 #123456 rectangle 10 20 30 40
+// AddShape tr1 #00feta triangle 0 0 10 0 0 10
+// AddShape ln1 #fefefe line 10 20 35 -88
+// AddShape txt1 #ffaa88 text 100 100 12 HELLO WORLD
 
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
@@ -117,7 +116,6 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string id = match[2].str();
                                 string color = match[3].str();
                                 ShapeFunction addShapeFunc;
-
                                 addShapeFunc = [&picture](const std::string& id, std::unique_ptr<shapes::Shape> newShape) {
                                     picture.AddShape(id, std::move(newShape));  // Use std::move to transfer ownership
                                 };

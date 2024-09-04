@@ -6,7 +6,7 @@
 #include <iostream>
 #include <functional>
 
-auto FlyWithCounting = []()
+auto CreateFlyWithCounting = []()
     {
     int flightCount = 0;
     return [flightCount]() mutable {
@@ -15,19 +15,19 @@ auto FlyWithCounting = []()
     };
 };
 
-auto FlyNoWay = []()
+auto CreateFlyNoWay = []()
     {
     return []() {};
 };
 
-auto QuackNormal = []()
+auto CreateQuackNormal = []()
     {
     return []() {
         std::cout << "Quack!" << std::endl;
     };
 };
 
-auto Squeak = []()
+auto CreateSqueak = []()
     {
     return []()
     {
@@ -35,12 +35,12 @@ auto Squeak = []()
     };
 };
 
-auto MuteQuack = []()
+auto CreateMuteQuack = []()
     {
     return []() {};
 };
 
-auto DanceWaltz = []()
+auto CreateDanceWaltz = []()
     {
     return []()
     {
@@ -48,7 +48,7 @@ auto DanceWaltz = []()
     };
 };
 
-auto DanceMinuet = []()
+auto CreateDanceMinuet = []()
     {
     return []()
     {
@@ -56,7 +56,7 @@ auto DanceMinuet = []()
     };
 };
 
-auto NoDance = []()
+auto CreateNoDance = []()
     {
     return []() {};
 };

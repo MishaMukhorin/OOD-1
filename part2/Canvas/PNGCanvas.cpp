@@ -6,7 +6,7 @@
 #include "stb_truetype.h"
 
 
-const std::string& FONTFILEPATH = R"(C:\Users\mrLogic\OOD\OOD-labs\OOD-1\part2\Canvas\font\Minecraft-Regular.ttf)";
+const std::string& FONTFILEPATH = R"(C:\Users\Misha\CLionProjects\OOD-1-git\part2\Canvas\font\Minecraft-Regular.ttf)";
 
 std::string ColorToString(const Color &color)
 {

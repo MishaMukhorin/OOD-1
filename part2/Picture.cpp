@@ -121,7 +121,7 @@ void shapes::Picture::ChangeShape(const string& id, unique_ptr<Shape> newShape)
     }
 }
 
-
+// использовать стратегию для рисования фигур и не будет наследников шейп
 
 
 void shapes::Picture::DrawShape(const string &id, shapes::ICanvas &canvas) const

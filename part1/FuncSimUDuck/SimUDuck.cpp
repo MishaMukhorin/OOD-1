@@ -39,7 +39,7 @@ int main()
     modelDuck.Display();
     modelDuck.Fly();
 
-    modelDuck.SetFlyBehavior(FlyWithCounting());
+    modelDuck.SetFlyBehavior(CreateFlyWithCounting());
     modelDuck.Fly();
 
     return EXIT_SUCCESS;

@@ -10,7 +10,7 @@ class RubberDuck : public Duck
 {
 public:
 	RubberDuck()
-		: Duck(std::make_unique<FlyNoWay>(), std::make_unique<SqueakBehavior>())
+		: Duck(std::make_unique<CreateFlyNoWay>(), std::make_unique<SqueakBehavior>())
 	{
 	}
 

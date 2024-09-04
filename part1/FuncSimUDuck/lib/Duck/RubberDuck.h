@@ -10,7 +10,7 @@ class RubberDuck : public Duck
 {
 public:
     RubberDuck()
-            : Duck(FlyNoWay(), Squeak(), NoDance())
+            : Duck(CreateFlyNoWay(), CreateSqueak(), CreateNoDance())
     {
     }
 
