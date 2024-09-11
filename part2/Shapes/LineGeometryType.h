@@ -47,7 +47,7 @@ namespace shapes
             return "line";
         }
 
-        [[nodiscard]] std::string GetParams() const override
+        [[nodiscard]] std::string GetShapeParamsString() const override
         {
             std::ostringstream oss;
             oss << m_x1 << " " << m_y1 << " " << m_x2 << " " << m_y2;

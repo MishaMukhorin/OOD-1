@@ -50,7 +50,7 @@ void shapes::Picture::List() const
     for (const auto& shape : m_shapes)
     {
         cout << number++ << " " << shape.second->GetType() << " " << shape.second->GetId() << " "
-                  << shape.second->GetColor() << " " << shape.second->GetParams() << endl;
+             << shape.second->GetColor() << " " << shape.second->GetShapeParamsString() << endl;
     }
 }
 
@@ -72,7 +72,7 @@ string shapes::Picture::GetShapeById(const string& id) const
     }
 
     auto shape = m_shapes.at(id).get();
-    return shape->GetType() + " " + shape->GetColor() + " " + shape->GetParams();
+    return shape->GetType() + " " + shape->GetColor() + " " + shape->GetShapeParamsString();
 }
 
 void shapes::Picture::ChangeColor(const string &id, const string &color)

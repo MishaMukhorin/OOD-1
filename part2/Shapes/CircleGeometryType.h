@@ -46,7 +46,7 @@ namespace shapes
             return "circle";
         }
 
-        [[nodiscard]] std::string GetParams() const override
+        [[nodiscard]] std::string GetShapeParamsString() const override
         {
             std::ostringstream oss;
             oss << m_x << " " << m_y << " " << m_r;

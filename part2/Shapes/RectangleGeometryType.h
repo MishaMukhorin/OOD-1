@@ -54,7 +54,7 @@ namespace shapes
             return "rectangle";
         }
 
-        [[nodiscard]] std::string GetParams() const override
+        [[nodiscard]] std::string GetShapeParamsString() const override
         {
             std::ostringstream oss;
             oss << m_left << " " << m_top << " " << m_width << " " << m_height;

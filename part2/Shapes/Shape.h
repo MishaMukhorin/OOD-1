@@ -60,9 +60,9 @@ namespace shapes
             return m_drawingStrategy->GetType();
         }
 
-        [[nodiscard]] std::string GetParams() const
+        [[nodiscard]] std::string GetShapeParamsString() const
         {
-            return m_drawingStrategy->GetParams();
+            return m_drawingStrategy->GetShapeParamsString();
         }
 
         void SetNewDrawingStrategy(std::unique_ptr<IGeometryType> newDrawingStrategy)

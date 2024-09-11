@@ -48,7 +48,7 @@ public:
 
 protected:
 
-    virtual void SetFlyBehavior(std::unique_ptr<IFlyBehavior> flyBehavior) // сделать возможность изменения стратегии только у тех уток которые могут это сделать
+    virtual void SetFlyBehavior(std::unique_ptr<IFlyBehavior> flyBehavior) // done сделать возможность изменения стратегии только у тех уток которые могут это сделать
     {
         m_flyBehavior = std::move(flyBehavior);
     }

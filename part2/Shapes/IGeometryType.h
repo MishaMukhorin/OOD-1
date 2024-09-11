@@ -15,8 +15,8 @@ namespace shapes
 
         [[nodiscard]] virtual std::string GetType() const = 0;
 
-        //другой интерфейс
-        [[nodiscard]] virtual std::string GetParams() const = 0;
+
+        [[nodiscard]] virtual std::string GetShapeParamsString() const = 0; // done другой интерфейс
 
         virtual void Move(double dx, double dy) = 0;
 
