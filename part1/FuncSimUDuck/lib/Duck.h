@@ -23,6 +23,15 @@ public:
     void Dance() { m_danceFunc(); }
     virtual void Display() const = 0;
 
+
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+
     void SetFlyBehavior(FlyFunction flyFunc) { m_flyFunc = std::move(flyFunc); }
     void SetQuackBehavior(QuackFunction quackFunc) { m_quackFunc = std::move(quackFunc); }
     void SetDanceBehavior(DanceFunction danceFunc) { m_danceFunc = std::move(danceFunc); }

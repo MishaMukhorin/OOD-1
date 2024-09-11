@@ -10,12 +10,11 @@ class MallardDuck : public Duck
 {
 public:
     MallardDuck()
-            : Duck(std::make_unique<FlyWithWings>(), std::make_unique<QuackBehavior>(), std::make_unique<WaltzBehavior>())
-    {
-    }
+            : Duck(std::make_unique<FlyWithWings>(),
+                   std::make_unique<QuackBehavior>(),
+                   std::make_unique<WaltzBehavior>() ) {}
 
-    void Display() const override
-    {
+    void Display() const override {
         std::cout << "I'm mallard duck" << std::endl;
     }
 };

@@ -5,7 +5,7 @@
 #ifndef OOD_1_PICTURE_H
 #define OOD_1_PICTURE_H
 
-#include "Shape.h"
+#include "../Shapes/Shape.h"
 #include <vector>
 #include <map>
 
@@ -25,7 +25,7 @@ namespace shapes
         void List() const;
 
         void ChangeColor(const std::string& id, const std::string& color);
-        void ChangeShape(const std::string& id, std::unique_ptr<Shape> newShape);
+        void ChangeShape(const std::string& id, std::unique_ptr<IDrawingStrategy> newShapeDrawingStrategy);
 
 
         void DrawShape(const std::string& id, ICanvas& canvas) const;
@@ -34,8 +34,7 @@ namespace shapes
         void CloneShape(const std::string& id, const std::string& newId);
 
     private:
-        std::vector<std::unique_ptr<Shape>> shapes;
-        std::map<std::string, Shape*> shapeMap;
+        std::map<std::string, std::unique_ptr<Shape>> m_shapes;
 
         [[nodiscard]] std::unique_ptr<Shape> CloneShapeInternal(const std::string& id, const std::string& newId) const;
     };

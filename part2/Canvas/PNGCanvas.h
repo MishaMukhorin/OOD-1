@@ -14,7 +14,7 @@
 #include <string>
 #include <cmath>
 #include <iomanip>
-#include "../Shape.h"
+#include "../Shapes/Shape.h"
 
 
 #ifndef PNG_CANVAS_H
@@ -34,9 +34,9 @@ Color StringToColor(const std::string& colorString);
 class PNGCanvas : public shapes::ICanvas
 {
 public:
-    PNGCanvas(int w, int h) : width(w), height(h), currentColor({255, 255, 255, 255}), currentX(0), currentY(0)
+    PNGCanvas(int w, int h) : m_width(w), m_height(h), m_currentColor({255, 255, 255, 255}), m_currentX(0), m_currentY(0)
     {
-        pixels.resize(width * height * 4, 255); // Белый фон
+        m_pixels.resize(m_width * m_height * 4, 255); // Белый фон
     }
 
     ~PNGCanvas() override
@@ -46,18 +46,18 @@ public:
 
     void SetColor(const std::string& color) override
     {
-        currentColor = StringToColor(color);
+        m_currentColor = StringToColor(color);
     }
 
     void MoveTo(double x, double y) override
     {
-        currentX = x;
-        currentY = y;
+        m_currentX = x;
+        m_currentY = y;
     }
 
     void LineTo(double x, double y) override
     {
-        DrawLine(currentX, currentY, x, y);
+        DrawLine(m_currentX, m_currentY, x, y);
         MoveTo(x, y);
     }
 
@@ -84,23 +84,23 @@ public:
     void SaveToFile(const std::string& filename);
 
 private:
-    int width, height;
-    Color currentColor{};
-    double currentX, currentY;
-    std::vector<uint8_t> pixels;
+    int m_width, m_height;
+    Color m_currentColor{};
+    double m_currentX, m_currentY;
+    std::vector<uint8_t> m_pixels;
 
     const int FONT_WIDTH = 8;
     const int FONT_HEIGHT = 8;
 
     void PutPixel(int x, int y)
     {
-        if (x >= 0 && x < width && y >= 0 && y < height)
+        if (x >= 0 && x < m_width && y >= 0 && y < m_height)
         {
-            int index = 4 * (y * width + x);
-            pixels[index] = currentColor.r;
-            pixels[index + 1] = currentColor.g;
-            pixels[index + 2] = currentColor.b;
-            pixels[index + 3] = currentColor.a;
+            int index = 4 * (y * m_width + x);
+            m_pixels[index] = m_currentColor.r;
+            m_pixels[index + 1] = m_currentColor.g;
+            m_pixels[index + 2] = m_currentColor.b;
+            m_pixels[index + 3] = m_currentColor.a;
         }
     }
 

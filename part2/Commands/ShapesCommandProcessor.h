@@ -6,12 +6,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "../Shapes/Triangle.h"
-#include "../Shapes/Circle.h"
-#include "../Shapes/Rectangle.h"
-#include "../Shapes/Line.h"
-#include "../Shapes/Text.h"
-#include "../Picture.h"
+#include "../Shapes/TriangleDrawingStrategy.h"
+#include "../Shapes/CircleDrawingStrategy.h"
+#include "../Shapes/RectangleDrawingStrategy.h"
+#include "../Shapes/LineDrawingStrategy.h"
+#include "../Shapes/TextDrawingStrategy.h"
+#include "../Picture/Picture.h"
 #include "../Canvas/PNGCanvas.h"
 
 #ifndef OOD_1_SHAPESCOMMANDPROCESSOR_H

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 add_executable(ShapesOut part2/main.cpp
-        part2/Picture.cpp
+        part2/Picture/Picture.cpp
         part2/Canvas/PNGCanvas.cpp
         part2/Commands/ShapesCommandProcessor.cpp
         part2/Canvas/PNGCanvas.cpp)

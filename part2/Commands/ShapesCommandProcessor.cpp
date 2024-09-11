@@ -5,43 +5,43 @@
 
 using namespace std;
 
-using ShapeFunction = function<void(string, unique_ptr<shapes::Shape>)>;
+using ShapeFunction = function<void(string, string, shapes::IDrawingStrategy*)>;
 
 void ShapeCommandExec(const ShapeFunction& command, const string& commandType, const string& id, const string& color, const string& commandStr, shapes::Picture &picture)
 {
     const string POSNUM = R"((\d+(?:\.\d+)?))";
     const string COORD = R"((-?\d+(?:\.\d+)?))";
     const string S = R"(\s+)";
-    unique_ptr<shapes::Shape> newShape;
+    shapes::IDrawingStrategy* newDrawingStrategy;
 
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
                     // Rectangle: command <id> rectangle <x> <y> <width> <height>
                     {regex(commandType + R"(\s+rectangle\s+)" + COORD + S + COORD + S + POSNUM + S + POSNUM),
-                            [&newShape, id, color](const smatch &match)
+                            [&newDrawingStrategy](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double width = stod(match[3].str());
                                 double height = stod(match[4].str());
 
-                                newShape = make_unique<shapes::Rectangle>(id, color, x, y, width, height);
+                                newDrawingStrategy = new shapes::RectangleDrawingStrategy(x, y, width, height);
                             }},
 
                     // Circle: command <id> circle <x> <y> <radius>
                     {regex(commandType + R"(\s+circle\s+)" + COORD + S + COORD + S + POSNUM),
-                            [&newShape, id, color](const smatch &match)
+                            [&newDrawingStrategy](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double radius = stod(match[3].str());
 
-                                newShape = make_unique<shapes::Circle>(id, color, x, y, radius);
+                                newDrawingStrategy = new shapes::CircleDrawingStrategy(x, y, radius);
                             }},
 
                     // Triangle: command <id> triangle <x1> <y1> <x2> <y2> <x3> <y3>
                     {regex(commandType + R"(\s+triangle\s+)" + COORD + S + COORD + S + COORD + S + COORD +
-                            S + COORD + S + COORD),[&newShape, id, color](const smatch &match)
+                            S + COORD + S + COORD),[&newDrawingStrategy](const smatch &match)
                             {
                                 double x1 = stod(match[1].str());
                                 double y1 = stod(match[2].str());
@@ -50,30 +50,30 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double x3 = stod(match[5].str());
                                 double y3 = stod(match[6].str());
 
-                                newShape = make_unique<shapes::Triangle>(id, color, x1, y1, x2, y2, x3, y3);
+                                newDrawingStrategy = new shapes::TriangleDrawingStrategy(x1, y1, x2, y2, x3, y3);
                             }},
 
                     // Line: command <id> line <x1> <y1> <x2> <y2>
                     {regex(commandType + R"(\s+line\s+)" + COORD + S + COORD + S + COORD + S + COORD),
-                            [&newShape, id, color](const smatch &match)
+                            [&newDrawingStrategy](const smatch &match)
                             {
                                 double x1 = stod(match[1].str());
                                 double y1 = stod(match[2].str());
                                 double x2 = stod(match[3].str());
                                 double y2 = stod(match[4].str());
 
-                                newShape = make_unique<shapes::Line>(id, color, x1, y1, x2, y2);
+                                newDrawingStrategy = new shapes::LineDrawingStrategy(x1, y1, x2, y2);
                             }},
 
                     // Text: command <id> text <x> <y> <size> <text>
                     {regex(commandType + R"(\s+text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
-                            [&newShape, id, color](const smatch &match)
+                            [&newDrawingStrategy](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double size = stod(match[3].str());
                                 string text = match[4].str();
-                                newShape = make_unique<shapes::Text>(id, color, x, y, size, text);
+                                newDrawingStrategy = new shapes::TextDrawingStrategy(x, y, size, text);
                             }},
             };
 
@@ -83,7 +83,8 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
         if (regex_search(commandStr, match, createShape.first))
         {
             createShape.second(match);
-            command(id, std::move(newShape));
+            command(id, color, (newDrawingStrategy));
+            delete newDrawingStrategy;
             return;
         }
     }
@@ -93,17 +94,16 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
 
 void LineProcessor(const std::string &line, shapes::Picture &picture)
 {
-    const string POSNUM = R"((\d+(?:\.\d+)?))";
     const string COORD = R"((-?\d+(?:\.\d+)?))";
     const string S = R"(\s+)";
     const string COLOR = R"((#[0-9A-Fa-f]{6}))";
 //
-// AddShape sh1 #ff00ff circle 100 110 15
-// AddShape circ #febb38 circle 100 200 25
-// AddShape sh2 #123456 rectangle 10 20 30 40
-// AddShape tr1 #00feta triangle 0 0 10 0 0 10
-// AddShape ln1 #fefefe line 10 20 35 -88
-// AddShape txt1 #ffaa88 text 100 100 12 HELLO WORLD
+//AddShape sh1 #ff00ff circle 100 110 15
+//AddShape circ #febb38 circle 100 200 25
+//AddShape sh2 #123456 rectangle 10 20 30 40
+//AddShape tr1 #00fefa triangle 0 0 10 0 0 10
+//AddShape ln1 #000000 line 20 0 0 20
+//AddShape txt1 #ffaa88 text 100 100 12 HELLO WORLD
 
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
@@ -116,8 +116,12 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string id = match[2].str();
                                 string color = match[3].str();
                                 ShapeFunction addShapeFunc;
-                                addShapeFunc = [&picture](const std::string& id, std::unique_ptr<shapes::Shape> newShape) {
-                                    picture.AddShape(id, std::move(newShape));  // Use std::move to transfer ownership
+                                addShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IDrawingStrategy* newDrawingStrategy) {
+                                    std::unique_ptr<shapes::Shape> newShape = make_unique<shapes::Shape>(
+                                            id,
+                                            color,
+                                            newDrawingStrategy->Clone());
+                                    picture.AddShape(id, std::move(newShape));
                                 };
 
                                 ShapeCommandExec(addShapeFunc, commandType, id, color, commandStr, picture);
@@ -132,8 +136,8 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string color = picture.GetShapeColorById(id);
                                 ShapeFunction changeShapeFunc;
 
-                                changeShapeFunc = [&picture](const std::string& id, std::unique_ptr<shapes::Shape> newShape) {
-                                    picture.ChangeShape(id, std::move(newShape));  // Use std::move to transfer ownership
+                                changeShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IDrawingStrategy* newDrawingStrategy){
+                                    picture.ChangeShape(id, newDrawingStrategy->Clone());
                                 };
 
                                 ShapeCommandExec(changeShapeFunc, commandType, id, color, commandStr, picture);
