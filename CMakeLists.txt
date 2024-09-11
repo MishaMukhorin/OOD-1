@@ -3,46 +3,47 @@ project(OOD_1)
 
 set(CMAKE_CXX_STANDARD 20)
 
-
-add_executable(ShapesOut part2/main.cpp
+# Main executable for Shapes
+add_executable(ShapesOut
+        part2/main.cpp
         part2/Picture/Picture.cpp
         part2/Canvas/PNGCanvas.cpp
-        part2/Commands/ShapesCommandProcessor.cpp)
+        part2/Commands/ShapesCommandProcessor.cpp
+)
 
+# Include Canvas headers
+include_directories(part2/Canvas)
 
-include_directories(part2/Canvas/stb_image_write.h)
-include_directories(part2/Canvas/stb_truetype.h.h)
-
-
-# Add include directories for FreeType
-target_include_directories(ShapesOut PRIVATE part2/Canvas/ft2build.h)
-
+# Additional executables
 add_executable(FuncDuck part1/FuncSimUDuck/SimUDuck.cpp)
 add_executable(SimDuck part1/SimUDuck/SimUDuck.cpp)
 
+# Enable testing
 enable_testing()
 
-# Use FetchContent to pull in GoogleTest and GoogleMock from GitHub
+# Fetch GoogleTest and GoogleMock
 include(FetchContent)
-
 FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG release-1.12.1  # Choose an appropriate release tag or branch
+        GIT_TAG release-1.12.1
 )
-
-# Make sure GTest is available for use
 FetchContent_MakeAvailable(googletest)
 
-# Add the GTest and GMock targets to the project
+# Add tests for Shapes
 add_executable(ShapeTests
         part2/Tests/ShapeTest.cpp
         part2/Tests/PictureTest.cpp
-        )
+        part2/Picture/Picture.cpp
+        part2/Canvas/PNGCanvas.cpp
+        part2/Commands/ShapesCommandProcessor.cpp
+)
 
+# Link libraries for tests
+target_link_libraries(ShapeTests PRIVATE gtest gmock gtest_main)
 
-
-target_link_libraries(ShapeTests PRIVATE Shapes gtest gmock gtest_main)
+# Ensure ShapesOut is built before ShapeTests
+add_dependencies(ShapeTests ShapesOut)
 
 # Add the test executable as a CMake test
 add_test(NAME ShapeTests COMMAND ShapeTests)

@@ -1,65 +1,98 @@
-//
-// Created by Misha on 11.09.2024.
-//
-
 #include <gtest/gtest.h>
 #include "../Picture/Picture.h"
 #include "../Shapes/CircleGeometryType.h"
+#include "../Shapes/REctangleGeometryType.h"
 #include "MockCanvas.h"
 
+// Test AddShape Command
 TEST(PictureTest, TestAddShape) {
-    // Arrange
     shapes::Picture picture;
     auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
                                                   std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
 
-    // Act
     picture.AddShape("circle1", std::move(circle));
 
-    // Assert (Check if the shape was added)
     EXPECT_EQ(picture.GetShapeById("circle1"), "circle #ff00ff 100 110 15");
 }
 
-TEST(PictureTest, TestMovePicture) {
-    // Arrange
+// Test ChangeShape Command
+TEST(PictureTest, TestChangeShape) {
     shapes::Picture picture;
     auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
                                                   std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
+
     picture.AddShape("circle1", std::move(circle));
 
-    // Act
-    picture.MovePicture(10, 20);
+    auto rectangleStrategy = std::make_unique<shapes::RectangleGeometryType>(10.0, 20.0, 30.0, 40.0);
+    picture.ChangeShape("circle1", std::move(rectangleStrategy));
 
-    // Assert (Check if all shapes were moved)
+    EXPECT_EQ(picture.GetShapeById("circle1"), "rectangle #ff00ff 10 20 30 40");
+}
+
+// Test MoveShape Command
+TEST(PictureTest, TestMoveShape) {
+    shapes::Picture picture;
+    auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
+                                                  std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
+
+    picture.AddShape("circle1", std::move(circle));
+
+    picture.MoveShape("circle1", 10.0, 20.0);
+
     EXPECT_EQ(picture.GetShapeById("circle1"), "circle #ff00ff 110 130 15");
 }
 
-TEST(PictureTest, TestCloneShape) {
-    // Arrange
+// Test MovePicture Command
+TEST(PictureTest, TestMovePicture) {
     shapes::Picture picture;
     auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
                                                   std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
+
+    auto rectangle = std::make_unique<shapes::Shape>("rect1", "#123456",
+                                                     std::make_unique<shapes::RectangleGeometryType>(10.0, 20.0, 30.0, 40.0));
+
     picture.AddShape("circle1", std::move(circle));
+    picture.AddShape("rect1", std::move(rectangle));
 
-    // Act
-    picture.CloneShape("circle1", "circle2");
+    picture.MovePicture(10.0, 20.0);
 
-    // Assert (Check if the shape was cloned with a new ID)
-    EXPECT_EQ(picture.GetShapeById("circle2"), "circle #ff00ff 100 110 15");
+    EXPECT_EQ(picture.GetShapeById("circle1"), "circle #ff00ff 110 130 15");
+    EXPECT_EQ(picture.GetShapeById("rect1"), "rectangle #123456 20 40 30 40");
 }
 
-TEST(PictureTest, TestDrawPicture) {
-    // Arrange
+// Test DeleteShape Command
+TEST(PictureTest, TestDeleteShape) {
     shapes::Picture picture;
-    MockCanvas mockCanvas;
     auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
                                                   std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
+
+    picture.AddShape("circle1", std::move(circle));
+    picture.DeleteShape("circle1");
+
+    EXPECT_EQ(picture.GetShapeById("circle1"), "");
+}
+
+// Test ChangeColor Command
+TEST(PictureTest, TestChangeColor) {
+    shapes::Picture picture;
+    auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
+                                                  std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
+
     picture.AddShape("circle1", std::move(circle));
 
-    // Expect the color to be set and an ellipse to be drawn
-    EXPECT_CALL(mockCanvas, SetColor("#ff00ff"));
-    EXPECT_CALL(mockCanvas, DrawEllipse(100.0, 110.0, 15.0, 15.0));
+    picture.ChangeColor("circle1", "#00ff00");
 
-    // Act
-    picture.DrawPicture(mockCanvas);
+    EXPECT_EQ(picture.GetShapeById("circle1"), "circle #00ff00 100 110 15");
+}
+
+// Test CloneShape Command
+TEST(PictureTest, TestCloneShape) {
+    shapes::Picture picture;
+    auto circle = std::make_unique<shapes::Shape>("circle1", "#ff00ff",
+                                                  std::make_unique<shapes::CircleGeometryType>(100.0, 110.0, 15.0));
+
+    picture.AddShape("circle1", std::move(circle));
+    picture.CloneShape("circle1", "circle2");
+
+    EXPECT_EQ(picture.GetShapeById("circle2"), "circle #ff00ff 100 110 15");
 }

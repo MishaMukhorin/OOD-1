@@ -7,7 +7,7 @@ using namespace std;
 
 using ShapeFunction = function<void(string, string, shapes::IGeometryType*)>;
 
-void ShapeCommandExec(const ShapeFunction& command, const string& commandType, const string& id, const string& color, const string& commandStr, shapes::Picture &picture)
+void ShapeCommandExec(const ShapeFunction& command, const string& id, const string& color, const string& commandStr, shapes::Picture &picture)
 {
     const string POSNUM = R"((\d+(?:\.\d+)?))";
     const string COORD = R"((-?\d+(?:\.\d+)?))";
@@ -17,7 +17,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
                     // Rectangle: command <id> rectangle <x> <y> <width> <height>
-                    {regex(commandType + R"(\s+rectangle\s+)" + COORD + S + COORD + S + POSNUM + S + POSNUM),
+                    {regex(R"(rectangle\s+)" + COORD + S + COORD + S + POSNUM + S + POSNUM),
                             [&newGeometryType](const smatch &match)
                             {
                                 double x = stod(match[1].str());
@@ -29,7 +29,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                             }},
 
                     // Circle: command <id> circle <x> <y> <radius>
-                    {regex(commandType + R"(\s+circle\s+)" + COORD + S + COORD + S + POSNUM),
+                    {regex(R"(circle\s+)" + COORD + S + COORD + S + POSNUM),
                             [&newGeometryType](const smatch &match)
                             {
                                 double x = stod(match[1].str());
@@ -40,7 +40,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                             }},
 
                     // Triangle: command <id> triangle <x1> <y1> <x2> <y2> <x3> <y3>
-                    {regex(commandType + R"(\s+triangle\s+)" + COORD + S + COORD + S + COORD + S + COORD +
+                    {regex(R"(triangle\s+)" + COORD + S + COORD + S + COORD + S + COORD +
                             S + COORD + S + COORD),[&newGeometryType](const smatch &match)
                             {
                                 double x1 = stod(match[1].str());
@@ -54,7 +54,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                             }},
 
                     // Line: command <id> line <x1> <y1> <x2> <y2>
-                    {regex(commandType + R"(\s+line\s+)" + COORD + S + COORD + S + COORD + S + COORD),
+                    {regex(R"(line\s+)" + COORD + S + COORD + S + COORD + S + COORD),
                             [&newGeometryType](const smatch &match)
                             {
                                 double x1 = stod(match[1].str());
@@ -66,7 +66,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                             }},
 
                     // Text: command <id> text <x> <y> <size> <text>
-                    {regex(commandType + R"(\s+text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
+                    {regex(R"(text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
                             [&newGeometryType](const smatch &match)
                             {
                                 double x = stod(match[1].str());
@@ -108,13 +108,13 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
                     // AddShape <id> <parameters>
-                    {regex(R"((AddShape)\s+([\w\d]+)\s+)" + COLOR + R"(.+)"),
+                    {regex(R"((AddShape)\s+([\w\d]+)\s+)" + COLOR + R"((.+))"),
                             [&picture](const smatch &match)
                             {
-                                string commandStr = match[0].str();
                                 string commandType = match[1].str() + R"(\s+[\w\d]+\s+#[0-9A-Fa-f]{6})";
                                 string id = match[2].str();
                                 string color = match[3].str();
+                                string commandStr = match[4].str();
                                 ShapeFunction addShapeFunc;
                                 addShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newGeometryType) {
                                     std::unique_ptr<shapes::Shape> newShape = make_unique<shapes::Shape>(
@@ -124,15 +124,15 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                     picture.AddShape(id, std::move(newShape));
                                 };
 
-                                ShapeCommandExec(addShapeFunc, commandType, id, color, commandStr, picture);
+                                ShapeCommandExec(addShapeFunc, id, color, commandStr, picture);
                             }},
                     // ChangeShape <id> <parameters>
-                    {regex(R"((ChangeShape)\s+([\w\d]+).+)"),
+                    {regex(R"((ChangeShape)\s+([\w\d]+)(.+))"),
                             [&picture](const smatch &match)
                             {
-                                string commandStr = match[0].str();
                                 string commandType = match[1].str() + R"(\s+[\w\d]+\s+)";
                                 string id = match[2].str();
+                                string commandStr = match[3].str();
                                 string color = picture.GetShapeColorById(id);
                                 ShapeFunction changeShapeFunc;
 
@@ -140,7 +140,7 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                     picture.ChangeShape(id, newGeometryType->Clone());
                                 };
 
-                                ShapeCommandExec(changeShapeFunc, commandType, id, color, commandStr, picture);
+                                ShapeCommandExec(changeShapeFunc, id, color, commandStr, picture);
                             }},
 
                     // MoveShape <id> <dx> <dy>
@@ -224,8 +224,16 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
         smatch match;
         if (regex_match(line, match, cmd.first))
         {
-            cmd.second(match);
-            return;
+            try
+            {
+                cmd.second(match);
+                return;
+            }
+            catch (std::invalid_argument &e)
+            {
+                cout << "error: " << e.what() << endl;
+                return;
+            }
         }
     }
     cout << "error: invalid command!" << endl;

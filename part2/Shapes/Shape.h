@@ -68,7 +68,7 @@ namespace shapes
 
         void SetNewGeometryType(std::unique_ptr<IGeometryType> newGeometryType)
         {
-            m_geometryType.reset(newGeometryType.get());
+            m_geometryType = std::move(newGeometryType);
         }
 
         ~Shape() = default;

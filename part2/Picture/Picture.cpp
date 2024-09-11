@@ -12,7 +12,7 @@ void shapes::Picture::AddShape(const std::string& id, std::unique_ptr<Shape> sha
 {
     if (m_shapes.contains(id))
     {
-        throw invalid_argument("Shape with this ID already exists");
+        throw invalid_argument("Shape with given ID already exists");
     }
     m_shapes.emplace(id, std::move(shape));
 }
@@ -21,7 +21,7 @@ void shapes::Picture::MoveShape(const string &id, double dx, double dy)
 {
     if (!m_shapes.contains(id))
     {
-        throw invalid_argument("Shape with this ID does not exist");
+        throw invalid_argument("Shape with given ID does not exist");
     }
     return m_shapes.at(id)->Move(dx, dy);
 }
@@ -39,7 +39,7 @@ void shapes::Picture::DeleteShape(const string &id)
     auto it = m_shapes.find(id);
     if (it == m_shapes.end())
     {
-        throw invalid_argument("Shape with &newShape ID does not exist");
+        throw invalid_argument("Shape with given ID does not exist");
     }
     m_shapes.erase(it);
 }
@@ -79,7 +79,7 @@ void shapes::Picture::ChangeColor(const string &id, const string &color)
 {
     if (!m_shapes.contains(id))
     {
-        throw invalid_argument("Shape with &newShape ID does not exist");
+        throw invalid_argument("Shape with given ID does not exist");
     }
 
     return m_shapes.at(id)->SetColor(color);
@@ -90,7 +90,7 @@ void shapes::Picture::ChangeShape(const string& id, std::unique_ptr<IGeometryTyp
 {
     if (!m_shapes.contains(id))
     {
-        cout << "error: Shape with given ID not found" << endl;
+        throw invalid_argument("Shape with given ID does not exist");
     }
 
     m_shapes.at(id)->SetNewGeometryType(std::move(newShapeGeometryType));
@@ -103,7 +103,7 @@ void shapes::Picture::DrawShape(const string &id, shapes::ICanvas &canvas) const
 {
     if (!m_shapes.contains(id))
     {
-        throw invalid_argument("Shape with &newShape ID does not exist");
+        throw invalid_argument("Shape with given ID does not exist");
     }
     m_shapes.at(id)->Draw(canvas);
 }
