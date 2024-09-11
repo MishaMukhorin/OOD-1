@@ -86,14 +86,14 @@ void shapes::Picture::ChangeColor(const string &id, const string &color)
 }
 
 
-void shapes::Picture::ChangeShape(const string& id, std::unique_ptr<IGeometryType> newShapeDrawingStrategy)
+void shapes::Picture::ChangeShape(const string& id, std::unique_ptr<IGeometryType> newShapeGeometryType)
 {
     if (!m_shapes.contains(id))
     {
         cout << "error: Shape with given ID not found" << endl;
     }
 
-    m_shapes.at(id)->SetNewDrawingStrategy(std::move(newShapeDrawingStrategy));
+    m_shapes.at(id)->SetNewGeometryType(std::move(newShapeGeometryType));
 }
 
 // использовать стратегию для рисования фигур и не будет наследников шейп

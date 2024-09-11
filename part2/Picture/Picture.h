@@ -25,7 +25,7 @@ namespace shapes
         void List() const;
 
         void ChangeColor(const std::string& id, const std::string& color);
-        void ChangeShape(const std::string& id, std::unique_ptr<IGeometryType> newShapeDrawingStrategy);
+        void ChangeShape(const std::string& id, std::unique_ptr<IGeometryType> newShapeGeometryType);
 
 
         void DrawShape(const std::string& id, ICanvas& canvas) const;

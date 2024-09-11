@@ -1,15 +1,3 @@
-//
-// Created by mrLogic on 7/10/2024.
-//
-////#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include "stb_image_write.h"
-////#endif // STB_IMAGE_WRITE_IMPLEMENTATION
-////#ifndef STB_TRUETYPE_IMPLEMENTATION
-//#define STB_TRUETYPE_IMPLEMENTATION
-//#include "stb_truetype.h"
-////#endif // STB_TRUETYPE_IMPLEMENTATION
-
 #include <fstream>
 #include <string>
 #include <cmath>

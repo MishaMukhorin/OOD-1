@@ -12,36 +12,36 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
     const string POSNUM = R"((\d+(?:\.\d+)?))";
     const string COORD = R"((-?\d+(?:\.\d+)?))";
     const string S = R"(\s+)";
-    shapes::IGeometryType* newDrawingStrategy;
+    shapes::IGeometryType* newGeometryType;
 
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
                     // Rectangle: command <id> rectangle <x> <y> <width> <height>
                     {regex(commandType + R"(\s+rectangle\s+)" + COORD + S + COORD + S + POSNUM + S + POSNUM),
-                            [&newDrawingStrategy](const smatch &match)
+                            [&newGeometryType](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double width = stod(match[3].str());
                                 double height = stod(match[4].str());
 
-                                newDrawingStrategy = new shapes::RectangleGeometryType(x, y, width, height);
+                                newGeometryType = new shapes::RectangleGeometryType(x, y, width, height);
                             }},
 
                     // Circle: command <id> circle <x> <y> <radius>
                     {regex(commandType + R"(\s+circle\s+)" + COORD + S + COORD + S + POSNUM),
-                            [&newDrawingStrategy](const smatch &match)
+                            [&newGeometryType](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double radius = stod(match[3].str());
 
-                                newDrawingStrategy = new shapes::CircleGeometryType(x, y, radius);
+                                newGeometryType = new shapes::CircleGeometryType(x, y, radius);
                             }},
 
                     // Triangle: command <id> triangle <x1> <y1> <x2> <y2> <x3> <y3>
                     {regex(commandType + R"(\s+triangle\s+)" + COORD + S + COORD + S + COORD + S + COORD +
-                            S + COORD + S + COORD),[&newDrawingStrategy](const smatch &match)
+                            S + COORD + S + COORD),[&newGeometryType](const smatch &match)
                             {
                                 double x1 = stod(match[1].str());
                                 double y1 = stod(match[2].str());
@@ -50,30 +50,30 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double x3 = stod(match[5].str());
                                 double y3 = stod(match[6].str());
 
-                                newDrawingStrategy = new shapes::TriangleGeometryType(x1, y1, x2, y2, x3, y3);
+                                newGeometryType = new shapes::TriangleGeometryType(x1, y1, x2, y2, x3, y3);
                             }},
 
                     // Line: command <id> line <x1> <y1> <x2> <y2>
                     {regex(commandType + R"(\s+line\s+)" + COORD + S + COORD + S + COORD + S + COORD),
-                            [&newDrawingStrategy](const smatch &match)
+                            [&newGeometryType](const smatch &match)
                             {
                                 double x1 = stod(match[1].str());
                                 double y1 = stod(match[2].str());
                                 double x2 = stod(match[3].str());
                                 double y2 = stod(match[4].str());
 
-                                newDrawingStrategy = new shapes::LineGeometryType(x1, y1, x2, y2);
+                                newGeometryType = new shapes::LineGeometryType(x1, y1, x2, y2);
                             }},
 
                     // Text: command <id> text <x> <y> <size> <text>
                     {regex(commandType + R"(\s+text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
-                            [&newDrawingStrategy](const smatch &match)
+                            [&newGeometryType](const smatch &match)
                             {
                                 double x = stod(match[1].str());
                                 double y = stod(match[2].str());
                                 double size = stod(match[3].str());
                                 string text = match[4].str();
-                                newDrawingStrategy = new shapes::TextGeometryType(x, y, size, text);
+                                newGeometryType = new shapes::TextGeometryType(x, y, size, text);
                             }},
             };
 
@@ -83,8 +83,8 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
         if (regex_search(commandStr, match, createShape.first))
         {
             createShape.second(match);
-            command(id, color, (newDrawingStrategy));
-            delete newDrawingStrategy;
+            command(id, color, (newGeometryType));
+            delete newGeometryType;
             return;
         }
     }
@@ -116,11 +116,11 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string id = match[2].str();
                                 string color = match[3].str();
                                 ShapeFunction addShapeFunc;
-                                addShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newDrawingStrategy) {
+                                addShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newGeometryType) {
                                     std::unique_ptr<shapes::Shape> newShape = make_unique<shapes::Shape>(
                                             id,
                                             color,
-                                            newDrawingStrategy->Clone());
+                                            newGeometryType->Clone());
                                     picture.AddShape(id, std::move(newShape));
                                 };
 
@@ -136,8 +136,8 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string color = picture.GetShapeColorById(id);
                                 ShapeFunction changeShapeFunc;
 
-                                changeShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newDrawingStrategy){
-                                    picture.ChangeShape(id, newDrawingStrategy->Clone());
+                                changeShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newGeometryType){
+                                    picture.ChangeShape(id, newGeometryType->Clone());
                                 };
 
                                 ShapeCommandExec(changeShapeFunc, commandType, id, color, commandStr, picture);

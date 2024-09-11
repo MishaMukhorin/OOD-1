@@ -22,22 +22,23 @@ namespace shapes
     {
     public:
 
-        Shape(std::string id, std::string color, std::unique_ptr<IGeometryType> drawingStrategy):
-                m_id(std::move(id)), m_color(std::move(color)), m_drawingStrategy(std::move(drawingStrategy))
+
+        Shape(std::string id, std::string color, std::unique_ptr<IGeometryType> GeometryType):
+                m_id(std::move(id)), m_color(std::move(color)), m_geometryType(std::move(GeometryType))
         {}
 
         void Draw(shapes::ICanvas& canvas) const
         {
-            m_drawingStrategy->Draw(canvas, m_color);
+            m_geometryType->Draw(canvas, m_color);
         }
         void Move(double dx, double dy)
         {
-            m_drawingStrategy->Move(dx, dy);
+            m_geometryType->Move(dx, dy);
         }
 
         [[nodiscard]] std::unique_ptr<Shape> Clone(const std::string& newId) const //done убрать виртуальность и посмотреть прототип
         {
-            Shape newShape(newId, m_color, m_drawingStrategy->Clone());
+            return make_unique<Shape>(newId, m_color, m_geometryType->Clone());
         }
 
         [[nodiscard]] std::string GetId() const
@@ -57,17 +58,17 @@ namespace shapes
 
         [[nodiscard]] std::string GetType() const
         {
-            return m_drawingStrategy->GetType();
+            return m_geometryType->GetType();
         }
 
         [[nodiscard]] std::string GetShapeParamsString() const
         {
-            return m_drawingStrategy->GetShapeParamsString();
+            return m_geometryType->GetShapeParamsString();
         }
 
-        void SetNewDrawingStrategy(std::unique_ptr<IGeometryType> newDrawingStrategy)
+        void SetNewGeometryType(std::unique_ptr<IGeometryType> newGeometryType)
         {
-            m_drawingStrategy.reset(newDrawingStrategy.get());
+            m_geometryType.reset(newGeometryType.get());
         }
 
         ~Shape() = default;
@@ -75,7 +76,7 @@ namespace shapes
         std::string m_id;
         std::string m_color;
 
-        std::unique_ptr<IGeometryType> m_drawingStrategy;
+        std::unique_ptr<IGeometryType> m_geometryType;
 
     };
 
