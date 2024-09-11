@@ -2,8 +2,8 @@
 // Created by mrLogic on 7/10/2024.
 //
 
-#ifndef OOD_1_TEXTDRAWINGSTRATEGY_H
-#define OOD_1_TEXTDRAWINGSTRATEGY_H
+#ifndef OOD_1_TEXTGEOMETRYTYPE_H
+#define OOD_1_TEXTGEOMETRYTYPE_H
 
 #include <utility>
 
@@ -11,11 +11,11 @@
 
 namespace shapes
 {
-    class TextDrawingStrategy : public IDrawingStrategy
+    class TextGeometryType : public IGeometryType
     {
     public:
 
-        TextDrawingStrategy(double left, double top, double fontSize, std::string  text)
+        TextGeometryType(double left, double top, double fontSize, std::string  text)
                 : m_left(left), m_top(top), m_fontSize(fontSize), m_text(std::move(text))
         {
             if (fontSize < 0)
@@ -23,6 +23,10 @@ namespace shapes
                 throw std::invalid_argument("Font size must be non-negative");
             }
         }
+
+        TextGeometryType(const TextGeometryType &text)
+                : m_left(text.m_left), m_top(text.m_top), m_fontSize(text.m_fontSize), m_text(text.m_text)
+        {}
 
         void Draw(ICanvas& canvas, std::string color) const override
         {
@@ -36,9 +40,9 @@ namespace shapes
             m_top += dy;
         }
 
-        [[nodiscard]] std::unique_ptr<IDrawingStrategy> Clone() const override
+        [[nodiscard]] std::unique_ptr<IGeometryType> Clone() const override
         {
-            return std::make_unique<TextDrawingStrategy>(m_left, m_top, m_fontSize, m_text);
+            return std::make_unique<TextGeometryType>(*this);
         }
 
         [[nodiscard]] std::string GetType() const override
@@ -60,4 +64,4 @@ namespace shapes
 
 }
 
-#endif //OOD_1_TEXTDRAWINGSTRATEGY_H
+#endif //OOD_1_TEXTGEOMETRYTYPE_H

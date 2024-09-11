@@ -2,8 +2,8 @@
 // Created by mrLogic on 7/10/2024.
 //
 
-#ifndef OOD_1_TRIANGLEDRAWINGSTRATEGY_H
-#define OOD_1_TRIANGLEDRAWINGSTRATEGY_H
+#ifndef OOD_1_TRIANGLEGEOMETRYTYPE_H
+#define OOD_1_TRIANGLEGEOMETRYTYPE_H
 
 #include <utility>
 
@@ -11,12 +11,14 @@
 
 namespace shapes
 {
-    class TriangleDrawingStrategy : public IDrawingStrategy
+    class TriangleGeometryType : public IGeometryType
     {
     public:
 
-        TriangleDrawingStrategy(double x1, double y1, double x2, double y2, double x3, double y3)
+        TriangleGeometryType(double x1, double y1, double x2, double y2, double x3, double y3)
                 : m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2), m_x3(x3), m_y3(y3) {}
+        TriangleGeometryType(const TriangleGeometryType &triangle)
+                : m_x1(triangle.m_x1), m_y1(triangle.m_y1), m_x2(triangle.m_x2), m_y2(triangle.m_y2), m_x3(triangle.m_x3), m_y3(triangle.m_y3) {}
 
         void Draw(ICanvas& canvas, std::string color) const override
         {
@@ -37,9 +39,9 @@ namespace shapes
             m_y3 += dy;
         }
 
-        [[nodiscard]] std::unique_ptr<IDrawingStrategy> Clone() const override
+        [[nodiscard]] std::unique_ptr<IGeometryType> Clone() const override
         {
-            return std::make_unique<TriangleDrawingStrategy>(m_x1, m_y1, m_x2, m_y2, m_x3, m_y3);
+            return std::make_unique<TriangleGeometryType>(*this);
         }
 
         [[nodiscard]] std::string GetType() const override
@@ -61,4 +63,4 @@ namespace shapes
 }
 
 
-#endif //OOD_1_TRIANGLEDRAWINGSTRATEGY_H
+#endif //OOD_1_TRIANGLEGEOMETRYTYPE_H

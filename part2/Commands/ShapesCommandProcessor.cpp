@@ -5,14 +5,14 @@
 
 using namespace std;
 
-using ShapeFunction = function<void(string, string, shapes::IDrawingStrategy*)>;
+using ShapeFunction = function<void(string, string, shapes::IGeometryType*)>;
 
 void ShapeCommandExec(const ShapeFunction& command, const string& commandType, const string& id, const string& color, const string& commandStr, shapes::Picture &picture)
 {
     const string POSNUM = R"((\d+(?:\.\d+)?))";
     const string COORD = R"((-?\d+(?:\.\d+)?))";
     const string S = R"(\s+)";
-    shapes::IDrawingStrategy* newDrawingStrategy;
+    shapes::IGeometryType* newDrawingStrategy;
 
     vector<pair<regex, function<void(const smatch &match)>>> commandMap
             {
@@ -25,7 +25,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double width = stod(match[3].str());
                                 double height = stod(match[4].str());
 
-                                newDrawingStrategy = new shapes::RectangleDrawingStrategy(x, y, width, height);
+                                newDrawingStrategy = new shapes::RectangleGeometryType(x, y, width, height);
                             }},
 
                     // Circle: command <id> circle <x> <y> <radius>
@@ -36,7 +36,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double y = stod(match[2].str());
                                 double radius = stod(match[3].str());
 
-                                newDrawingStrategy = new shapes::CircleDrawingStrategy(x, y, radius);
+                                newDrawingStrategy = new shapes::CircleGeometryType(x, y, radius);
                             }},
 
                     // Triangle: command <id> triangle <x1> <y1> <x2> <y2> <x3> <y3>
@@ -50,7 +50,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double x3 = stod(match[5].str());
                                 double y3 = stod(match[6].str());
 
-                                newDrawingStrategy = new shapes::TriangleDrawingStrategy(x1, y1, x2, y2, x3, y3);
+                                newDrawingStrategy = new shapes::TriangleGeometryType(x1, y1, x2, y2, x3, y3);
                             }},
 
                     // Line: command <id> line <x1> <y1> <x2> <y2>
@@ -62,7 +62,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double x2 = stod(match[3].str());
                                 double y2 = stod(match[4].str());
 
-                                newDrawingStrategy = new shapes::LineDrawingStrategy(x1, y1, x2, y2);
+                                newDrawingStrategy = new shapes::LineGeometryType(x1, y1, x2, y2);
                             }},
 
                     // Text: command <id> text <x> <y> <size> <text>
@@ -73,7 +73,7 @@ void ShapeCommandExec(const ShapeFunction& command, const string& commandType, c
                                 double y = stod(match[2].str());
                                 double size = stod(match[3].str());
                                 string text = match[4].str();
-                                newDrawingStrategy = new shapes::TextDrawingStrategy(x, y, size, text);
+                                newDrawingStrategy = new shapes::TextGeometryType(x, y, size, text);
                             }},
             };
 
@@ -116,7 +116,7 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string id = match[2].str();
                                 string color = match[3].str();
                                 ShapeFunction addShapeFunc;
-                                addShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IDrawingStrategy* newDrawingStrategy) {
+                                addShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newDrawingStrategy) {
                                     std::unique_ptr<shapes::Shape> newShape = make_unique<shapes::Shape>(
                                             id,
                                             color,
@@ -136,7 +136,7 @@ void LineProcessor(const std::string &line, shapes::Picture &picture)
                                 string color = picture.GetShapeColorById(id);
                                 ShapeFunction changeShapeFunc;
 
-                                changeShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IDrawingStrategy* newDrawingStrategy){
+                                changeShapeFunc = [&picture](const std::string& id, const std::string& color, shapes::IGeometryType* newDrawingStrategy){
                                     picture.ChangeShape(id, newDrawingStrategy->Clone());
                                 };
 
@@ -245,176 +245,3 @@ void CommandProcessor(istream &str)
         LineProcessor(line, picture);
     }
 }
-
-//// Rectangle: AddShape <id> <color> rectangle <x> <y> <width> <height>
-//                    {regex(R"(AddShape\s+([\w\d]+)\s+)" + COLOR + R"(\s+rectangle\s+)" + COORD + S + COORD + S + POSNUM + S + POSNUM),
-//                            [&picture](const smatch &match)
-//                            {
-//                                string id = match[1].str();
-//                                string color = match[2].str();
-//                                double x = stod(match[3].str());
-//                                double y = stod(match[4].str());
-//                                double width = stod(match[5].str());
-//                                double height = stod(match[6].str());
-//
-//                                picture.AddShape(id, make_unique<shapes::Rectangle>(id, color, x, y, width, height));
-//                            }},
-//
-//                    // Circle: AddShape <id> <color> circle <x> <y> <radius>
-//                    {regex(R"(AddShape\s+([\w\d]+)\s+)" + COLOR + R"(\s+circle\s+)" + COORD + S + COORD + S + POSNUM),
-//                            [&picture](const smatch &match)
-//                            {
-//                                string id = match[1].str();
-//                                string color = match[2].str();
-//                                double x = stod(match[3].str());
-//                                double y = stod(match[4].str());
-//                                double radius = stod(match[5].str());
-//
-//                                picture.AddShape(make_unique<shapes::Circle>(id, color, x, y, radius));
-//                            }},
-//
-//                    // Triangle: AddShape <id> <color> triangle <x1> <y1> <x2> <y2> <x3> <y3>
-//                    {regex(R"(AddShape\s+([\w\d]+)\s+)" + COLOR + R"(\s+triangle\s+)" + COORD + S + COORD + S + COORD + S + COORD + S + COORD + S + COORD),
-//                            [&picture](const smatch &match)
-//                            {
-//                                string id = match[1].str();
-//                                string color = match[2].str();
-//                                double x1 = stod(match[3].str());
-//                                double y1 = stod(match[4].str());
-//                                double x2 = stod(match[5].str());
-//                                double y2 = stod(match[6].str());
-//                                double x3 = stod(match[7].str());
-//                                double y3 = stod(match[8].str());
-//
-//                                picture.AddShape(make_unique<shapes::Triangle>(id, color, x1, y1, x2, y2, x3, y3));
-//                            }},
-//
-//                    // Line: AddShape <id> <color> line <x1> <y1> <x2> <y2>
-//                    {regex(R"(AddShape\s+([\w\d]+)\s+)" + COLOR + R"(\s+line\s+)" + COORD + S + COORD + S + COORD + S + COORD),
-//                            [&picture](const smatch &match)
-//                            {
-//                                string id = match[1].str();
-//                                string color = match[2].str();
-//                                double x1 = stod(match[3].str());
-//                                double y1 = stod(match[4].str());
-//                                double x2 = stod(match[5].str());
-//                                double y2 = stod(match[6].str());
-//
-//                                picture.AddShape(make_unique<shapes::Line>(id, color, x1, y1, x2, y2));
-//                            }},
-//
-//                    // Text: AddShape <id> <color> text <x> <y> <size> <text>
-//                    {regex(R"(AddShape\s+([\w\d]+)\s+)" + COLOR + R"(\s+text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
-//                            [&picture](const smatch &match)
-//                            {
-//                                string id = match[1].str();
-//                                string color = match[2].str();
-//                                double x = stod(match[3].str());
-//                                double y = stod(match[4].str());
-//                                double size = stod(match[5].str());
-//                                string text = match[6].str();
-//
-//                                picture.AddShape(make_unique<shapes::Text>(id, color, x, y, size, text));
-//                            }},
-//                    // ChangeShape <id> <parameters>
-//                    {regex(R"(ChangeShape\s+([\w\d]+).+)"),
-//                            [&picture](const smatch &match)
-//                            {
-//                                string id = match[1].str();
-//                                string commandStr = match[0].str();
-//
-//                                ChangeShapeCommandExec(id, commandStr, picture);
-//                            }},
-
-//
-//void ChangeShapeCommandExec(const string& id, const string& commandStr, shapes::Picture &picture)
-//{
-//    const string POSNUM = R"((\d+(?:\.\d+)?))";
-//    const string COORD = R"((-?\d+(?:\.\d+)?))";
-//    const string S = R"(\s+)";
-//    unique_ptr<shapes::Shape> newShape;
-//    string color = picture.GetShapeColorById(id);
-//
-//    vector<pair<regex, function<void(const smatch &match)>>> commandMap
-//            {
-//                    // Rectangle: ChangeShape <id> rectangle <x> <y> <width> <height>
-//                    {regex(R"(ChangeShape\s+([\w\d]+)\s+rectangle\s+)" + COORD + S + COORD + S + POSNUM + S + POSNUM),
-//                                                  [&newShape, color](const smatch &match)
-//                                                  {
-//                                                      string id = match[1].str();
-//                                                      double x = stod(match[2].str());
-//                                                      double y = stod(match[3].str());
-//                                                      double width = stod(match[4].str());
-//                                                      double height = stod(match[5].str());
-//
-//                                                      newShape = make_unique<shapes::Rectangle>(id, color, x, y, width, height);
-//                                                  }},
-//
-//                    // Circle: ChangeShape <id> circle <x> <y> <radius>
-//                    {regex(R"(ChangeShape\s+([\w\d]+)\s+circle\s+)" + COORD + S + COORD + S + POSNUM),
-//                                                  [&newShape, color](const smatch &match)
-//                                                  {
-//                                                      string id = match[1].str();
-//                                                      double x = stod(match[2].str());
-//                                                      double y = stod(match[3].str());
-//                                                      double radius = stod(match[4].str());
-//
-//                                                      newShape = make_unique<shapes::Circle>(id, color, x, y, radius);
-//                                                  }},
-//
-//                    // Triangle: ChangeShape <id> triangle <x1> <y1> <x2> <y2> <x3> <y3>
-//                    {regex(R"(ChangeShape\s+([\w\d]+)\s+triangle\s+)" + COORD + S + COORD + S + COORD + S + COORD +
-//                           S + COORD + S + COORD),[&newShape, color](const smatch &match)
-//                                                  {
-//                                                      string id = match[1].str();
-//                                                      double x1 = stod(match[2].str());
-//                                                      double y1 = stod(match[3].str());
-//                                                      double x2 = stod(match[4].str());
-//                                                      double y2 = stod(match[5].str());
-//                                                      double x3 = stod(match[6].str());
-//                                                      double y3 = stod(match[7].str());
-//
-//                                                      newShape = make_unique<shapes::Triangle>(id, color, x1, y1, x2, y2, x3, y3);
-//                                                  }},
-//
-//                    // Line: ChangeShape <id> line <x1> <y1> <x2> <y2>
-//                    {regex(R"(ChangeShape\s+([\w\d]+)\s+line\s+)" + COORD + S + COORD + S + COORD + S + COORD),
-//                                                  [&newShape, color](const smatch &match)
-//                                                  {
-//                                                      string id = match[1].str();
-//                                                      double x1 = stod(match[2].str());
-//                                                      double y1 = stod(match[3].str());
-//                                                      double x2 = stod(match[4].str());
-//                                                      double y2 = stod(match[5].str());
-//
-//                                                      newShape = make_unique<shapes::Line>(id, color, x1, y1, x2, y2);
-//                                                  }},
-//
-//                    // Text: ChangeShape <id> text <x> <y> <size> <text>
-//                    {regex(R"(ChangeShape\s+([\w\d]+)\s+text\s+)" + COORD + S + COORD + S + POSNUM + S + R"((.+))"),
-//                                                  [&newShape, color](const smatch &match)
-//                                                  {
-//                                                      string id = match[1].str();
-//                                                      double x = stod(match[2].str());
-//                                                      double y = stod(match[3].str());
-//                                                      double size = stod(match[4].str());
-//                                                      string text = match[5].str();
-//
-//                                                      newShape = make_unique<shapes::Text>(id, color, x, y, size, text);
-//                                                  }},
-//            };
-//
-//    for (const auto& command : commandMap)
-//    {
-//        smatch match;
-//        if (regex_search(commandStr, match, command.first))
-//        {
-//            command.second(match);
-//            picture.ChangeShape(id, std::move(newShape));
-//            return;
-//        }
-//    }
-//    cout << "error: invalid command!" << endl;
-//}
-
-//

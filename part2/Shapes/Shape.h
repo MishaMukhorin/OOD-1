@@ -13,7 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include "../Canvas.h"
-#include "IDrawingStrategy.h"
+#include "IGeometryType.h"
 
 namespace shapes
 {
@@ -22,7 +22,7 @@ namespace shapes
     {
     public:
 
-        Shape(std::string id, std::string color, std::unique_ptr<IDrawingStrategy> drawingStrategy):
+        Shape(std::string id, std::string color, std::unique_ptr<IGeometryType> drawingStrategy):
                 m_id(std::move(id)), m_color(std::move(color)), m_drawingStrategy(std::move(drawingStrategy))
         {}
 
@@ -35,10 +35,9 @@ namespace shapes
             m_drawingStrategy->Move(dx, dy);
         }
 
-        [[nodiscard]] virtual std::unique_ptr<Shape> Clone(const std::string& newId) const
+        [[nodiscard]] std::unique_ptr<Shape> Clone(const std::string& newId) const //done убрать виртуальность и посмотреть прототип
         {
             Shape newShape(newId, m_color, m_drawingStrategy->Clone());
-
         }
 
         [[nodiscard]] std::string GetId() const
@@ -66,17 +65,17 @@ namespace shapes
             return m_drawingStrategy->GetParams();
         }
 
-        void SetNewDrawingStrategy(std::unique_ptr<IDrawingStrategy> newDrawingStrategy)
+        void SetNewDrawingStrategy(std::unique_ptr<IGeometryType> newDrawingStrategy)
         {
             m_drawingStrategy.reset(newDrawingStrategy.get());
         }
 
-        virtual ~Shape() = default;
+        ~Shape() = default;
     private:
         std::string m_id;
         std::string m_color;
 
-        std::unique_ptr<IDrawingStrategy> m_drawingStrategy;
+        std::unique_ptr<IGeometryType> m_drawingStrategy;
 
     };
 

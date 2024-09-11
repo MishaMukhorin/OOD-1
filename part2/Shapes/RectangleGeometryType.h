@@ -2,18 +2,18 @@
 // Created by mrLogic on 7/10/2024.
 //
 
-#ifndef OOD_1_RECTANGLEDRAWINGSTRATEGY_H
-#define OOD_1_RECTANGLEDRAWINGSTRATEGY_H
+#ifndef OOD_1_RECTANGLEGEOMETRYTYPE_H
+#define OOD_1_RECTANGLEGEOMETRYTYPE_H
 
 #include "Shape.h"
 
 namespace shapes
 {
-    class RectangleDrawingStrategy : public IDrawingStrategy
+    class RectangleGeometryType : public IGeometryType
     {
     public:
 
-        RectangleDrawingStrategy(double left, double top, double width, double height)
+        RectangleGeometryType(double left, double top, double width, double height)
                 : m_left(left), m_top(top), m_width(width), m_height(height)
         {
             if (width < 0 || height < 0)
@@ -21,6 +21,12 @@ namespace shapes
                 throw std::invalid_argument("Width and height must be non-negative");
             }
         }
+
+        RectangleGeometryType(const RectangleGeometryType& rectangle):
+                m_left(rectangle.m_left),
+                m_top(rectangle.m_left),
+                m_height(rectangle.m_left),
+                m_width(rectangle.m_left) {}
 
         void Draw(ICanvas& canvas, std::string color) const override
         {
@@ -38,9 +44,9 @@ namespace shapes
             m_top += dy;
         }
 
-        [[nodiscard]] std::unique_ptr<IDrawingStrategy> Clone() const override
+        [[nodiscard]] std::unique_ptr<IGeometryType> Clone() const override
         {
-            return std::make_unique<RectangleDrawingStrategy>(m_left, m_top, m_width, m_height);
+            return std::make_unique<RectangleGeometryType>(*this);
         }
 
         [[nodiscard]] std::string GetType() const override
@@ -60,4 +66,4 @@ namespace shapes
     };
 
 }
-#endif //OOD_1_RECTANGLEDRAWINGSTRATEGY_H
+#endif //OOD_1_RECTANGLEGEOMETRYTYPE_H

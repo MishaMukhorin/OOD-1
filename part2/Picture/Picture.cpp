@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include "Picture.h"
-#include "../Shapes/TriangleDrawingStrategy.h"
+#include "../Shapes/TriangleGeometryType.h"
 
 using namespace std;
 
@@ -86,7 +86,7 @@ void shapes::Picture::ChangeColor(const string &id, const string &color)
 }
 
 
-void shapes::Picture::ChangeShape(const string& id, std::unique_ptr<IDrawingStrategy> newShapeDrawingStrategy)
+void shapes::Picture::ChangeShape(const string& id, std::unique_ptr<IGeometryType> newShapeDrawingStrategy)
 {
     if (!m_shapes.contains(id))
     {

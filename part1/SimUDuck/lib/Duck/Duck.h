@@ -46,17 +46,19 @@ public:
 
     virtual void Display() const = 0;
 
-    void SetFlyBehavior(std::unique_ptr<IFlyBehavior> flyBehavior) // сделать возможность изменения стратегии только у тех уток которые могут это сделать
+protected:
+
+    virtual void SetFlyBehavior(std::unique_ptr<IFlyBehavior> flyBehavior) // сделать возможность изменения стратегии только у тех уток которые могут это сделать
     {
         m_flyBehavior = std::move(flyBehavior);
     }
 
-    void SetQuackBehavior(std::unique_ptr<IQuackBehavior> quackBehavior)
+    virtual void SetQuackBehavior(std::unique_ptr<IQuackBehavior> quackBehavior)
     {
         m_quackBehavior = std::move(quackBehavior);
     }
 
-    void SetDanceBehavior(std::unique_ptr<IDanceBehavior> danceBehavior)
+    virtual void SetDanceBehavior(std::unique_ptr<IDanceBehavior> danceBehavior)
     {
         m_danceBehavior = std::move(danceBehavior);
     }

@@ -2,8 +2,8 @@
 // Created by mrLogic on 7/10/2024.
 //
 
-#ifndef OOD_1_LINEDRAWINGSTRATEGY_H
-#define OOD_1_LINEDRAWINGSTRATEGY_H
+#ifndef OOD_1_LINEGEOMETRYTYPE_H
+#define OOD_1_LINEGEOMETRYTYPE_H
 
 #include <utility>
 
@@ -11,12 +11,16 @@
 
 namespace shapes
 {
-    class LineDrawingStrategy : public IDrawingStrategy
+    class LineGeometryType : public IGeometryType
     {
     public:
 
-        LineDrawingStrategy(double x1, double y1, double x2, double y2)
-                : m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2) {}
+        LineGeometryType(double x1, double y1, double x2, double y2)
+                : m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2)
+                {}
+
+        LineGeometryType(const LineGeometryType &line):
+        m_x1(line.m_x1), m_y1(line.m_y1), m_x2(line.m_x2), m_y2(line.m_y2) {}
 
         void Draw(ICanvas& canvas, std::string color) const override
         {
@@ -33,9 +37,9 @@ namespace shapes
             m_y2 += dy;
         }
 
-        [[nodiscard]] std::unique_ptr<IDrawingStrategy> Clone() const override
+        [[nodiscard]] std::unique_ptr<IGeometryType> Clone() const override
         {
-            return std::make_unique<LineDrawingStrategy>(m_x1, m_y1, m_x2, m_y2);
+            return std::make_unique<LineGeometryType>(*this);
         }
 
         [[nodiscard]] std::string GetType() const override
@@ -56,4 +60,4 @@ namespace shapes
 
 }
 
-#endif //OOD_1_LINEDRAWINGSTRATEGY_H
+#endif //OOD_1_LINEGEOMETRYTYPE_H

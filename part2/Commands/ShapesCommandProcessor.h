@@ -6,11 +6,11 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "../Shapes/TriangleDrawingStrategy.h"
-#include "../Shapes/CircleDrawingStrategy.h"
-#include "../Shapes/RectangleDrawingStrategy.h"
-#include "../Shapes/LineDrawingStrategy.h"
-#include "../Shapes/TextDrawingStrategy.h"
+#include "../Shapes/TriangleGeometryType.h"
+#include "../Shapes/CircleGeometryType.h"
+#include "../Shapes/RectangleGeometryType.h"
+#include "../Shapes/LineGeometryType.h"
+#include "../Shapes/TextGeometryType.h"
 #include "../Picture/Picture.h"
 #include "../Canvas/PNGCanvas.h"
 

@@ -42,5 +42,19 @@ int main()
     modelDuck.SetFlyBehavior(CreateFlyWithCounting());
     modelDuck.Fly();
 
+    auto f = CreateFlyWithCounting();
+    ModelDuck modelDuck1;
+
+    modelDuck1.SetFlyBehavior(f);
+    modelDuck1.Display();
+    modelDuck1.Fly();
+    modelDuck1.Fly();
+
+    ModelDuck modelDuck2;
+
+    modelDuck2.SetFlyBehavior(f);
+    modelDuck2.Display();
+    modelDuck2.Fly();
+    modelDuck2.Fly();
     return EXIT_SUCCESS;
 }

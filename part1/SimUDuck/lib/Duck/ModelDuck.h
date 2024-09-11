@@ -9,7 +9,7 @@ class ModelDuck : public Duck
 {
 public:
 	ModelDuck()
-		: Duck(std::make_unique<CreateFlyNoWay>(), std::make_unique<QuackBehavior>())
+		: Duck(std::make_unique<FlyNoWay>(), std::make_unique<QuackBehavior>())
 	{
 	}
 
@@ -17,6 +17,11 @@ public:
 	{
 		std::cout << "I'm model duck" << std::endl;
 	}
+
+    void SetQuackBehavior(std::unique_ptr<IQuackBehavior> quackBehavior) override
+    {
+        Duck::SetQuackBehavior(std::move(quackBehavior));
+    }
 
 };
 
